@@ -1,0 +1,40 @@
+{
+  "cli": {
+    "version": ">= 10.0.2"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "env": {
+        "listdApiUrl": "https://listd.csulit.dev",
+        "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "listdApiUrl": "https://listd.csulit.dev",
+        "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "env": {
+        "listdApiUrl": "https://listd.csulit.dev",
+        "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
