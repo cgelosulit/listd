@@ -16,7 +16,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.csulit.listd",
       "config": {
-        "googleMapsApiKey": "AIzaSyAGjLINOZ1IY6g_iYWnuH9AvTovVkJ48Rk"
+        "googleMapsApiKey": ""
       }
     },
     "android": {
@@ -26,7 +26,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAFbqGHGL6zgjcSk1RAKtptBFWEL-mVwUk"
+          "apiKey": ""
         }
       },
       "package": "com.csulit.listd",

@@ -119,7 +119,7 @@ const reducer = (state: State, action: Action): State => {
 export default function MapScreen() {
   const colorScheme = useColorScheme();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['5%', '50%', '70%', '80%', '90%'], []);
+  const snapPoints = useMemo(() => ['3%', '50%', '70%', '80%', '90%'], []);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { isLoading, data: response } = useMapPropertySearch(
     {
@@ -254,16 +254,6 @@ export default function MapScreen() {
     }
   }, [state.isInTouch, state.coordinates]);
 
-  useEffect(() => {
-    if (
-      !isLoading &&
-      state.bottomSheetIndex === -1 &&
-      response?.data?.properties.results.length
-    ) {
-      bottomSheetRef.current?.snapToIndex(0);
-    }
-  }, [isLoading, response?.data, state.bottomSheetIndex]);
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <MapHeaderControl
@@ -291,33 +281,35 @@ export default function MapScreen() {
         handleTouchStart={handleTouchStart}
         handleTouchEnd={handleOnTouchEnd}
       />
-      <BottomSheet
-        ref={bottomSheetRef}
-        enablePanDownToClose
-        index={state.bottomSheetIndex}
-        onAnimate={(_, to) =>
-          dispatch({ type: 'SET_BOTTOM_SHEET_INDEX', payload: to })
-        }
-        backdropComponent={renderBackdrop}
-        snapPoints={snapPoints}
-        backgroundStyle={{
-          backgroundColor: Colors[colorScheme].background,
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: Colors[colorScheme].tabIconDefault,
-        }}
-      >
-        <BottomSheetFlatList
-          data={response?.data?.properties.results || []}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{ padding: 10 }}
-          renderItem={({ item }) => (
-            <View>
-              <Text>{item.title}</Text>
-            </View>
-          )}
-        />
-      </BottomSheet>
+      {response?.data && response.data?.properties.results.length > 0 && (
+        <BottomSheet
+          ref={bottomSheetRef}
+          enablePanDownToClose
+          index={state.bottomSheetIndex}
+          onAnimate={(_, to) =>
+            dispatch({ type: 'SET_BOTTOM_SHEET_INDEX', payload: to })
+          }
+          backdropComponent={renderBackdrop}
+          snapPoints={snapPoints}
+          backgroundStyle={{
+            backgroundColor: Colors[colorScheme].background,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor: Colors[colorScheme].tabIconDefault,
+          }}
+        >
+          <BottomSheetFlatList
+            data={response?.data?.properties.results || []}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={{ padding: 10 }}
+            renderItem={({ item }) => (
+              <View>
+                <Text>{item.title}</Text>
+              </View>
+            )}
+          />
+        </BottomSheet>
+      )}
     </GestureHandlerRootView>
   );
 }
