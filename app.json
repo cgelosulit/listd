@@ -1,35 +1,31 @@
 {
   "expo": {
-    "name": "listd",
+    "name": "Listd",
     "slug": "listd",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "listd",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
+      "buildNumber": "1.0.1",
       "supportsTablet": false,
-      "bundleIdentifier": "com.csulit.listd",
+      "bundleIdentifier": "com.savills.listd",
       "config": {
-        "googleMapsApiKey": ""
+        "googleMapsApiKey": "AIzaSyAGjLINOZ1IY6g_iYWnuH9AvTovVkJ48Rk"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#10b981"
       },
       "config": {
         "googleMaps": {
-          "apiKey": ""
+          "apiKey": "AIzaSyAFbqGHGL6zgjcSk1RAKtptBFWEL-mVwUk"
         }
       },
-      "package": "com.csulit.listd",
+      "package": "com.savills.listd",
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.CAMERA",
@@ -52,7 +48,7 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": true
+          "recordAudioAndroid": false
         }
       ],
       [
@@ -65,7 +61,6 @@
         "expo-build-properties",
         {
           "android": {
-            "enableR8": true,
             "enableProguardInReleaseBuilds": true
           }
         }

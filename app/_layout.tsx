@@ -7,13 +7,14 @@ import {
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { config } from '@/constants/Configs';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import LottieSplashScreen from '@/components/lottiefiles/LottieSplashScreen';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -25,12 +26,10 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+  const [isLoading, setIsLoading] = useState(true);
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
@@ -41,14 +40,8 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
+  if (!loaded || isLoading) {
+    return <LottieSplashScreen setIsLoading={setIsLoading} />;
   }
 
   const tokenCache = {
@@ -74,7 +67,9 @@ export default function RootLayout() {
       tokenCache={tokenCache}
     >
       <QueryClientProvider client={queryClient}>
-        <RootLayoutNav />
+        <GestureHandlerRootView>
+          <RootLayoutNav />
+        </GestureHandlerRootView>
       </QueryClientProvider>
     </ClerkProvider>
   );

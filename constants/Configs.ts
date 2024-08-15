@@ -3,6 +3,12 @@ import Constants from 'expo-constants';
 export const config = {
   listdApiUrl: Constants.expoConfig?.extra?.listdApiUrl ?? '',
   clerkPublishableKey: Constants.expoConfig?.extra?.clerkPublishableKey ?? '',
+  propertyQueryParams: {
+    priceRangeLow: 0,
+    priceRangeHigh: 1_000_000_000,
+    sqmRangeLow: 1,
+    sqmRangeHigh: 10_000,
+  },
   mapDarkMode: [
     {
       elementType: 'geometry',

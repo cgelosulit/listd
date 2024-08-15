@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import MapView, {
   Polyline,
   PanDragEvent,
@@ -10,6 +10,8 @@ import MemoizedMarker from './MemoizedMarker';
 import { config } from '@/constants/Configs';
 import { Property } from '@/interface';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { View } from '../common/Themed';
+import Colors from '@/constants/Colors';
 
 type MapContainerProps = {
   debug?: boolean;
@@ -20,6 +22,7 @@ type MapContainerProps = {
   defaultRegion: LatLng;
   boundingBoxCoords: LatLng[];
   boundingBoxCenter: LatLng | null;
+  handleOnMarkerPress?: (propertyId: number) => void;
   handleMapDrag: (event: PanDragEvent) => void;
   handleTouchStart: () => void;
   handleTouchEnd: () => void;
@@ -40,6 +43,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
   defaultRegion,
   boundingBoxCoords,
   boundingBoxCenter,
+  handleOnMarkerPress,
   handleMapDrag,
   handleTouchStart,
   handleTouchEnd,
@@ -65,15 +69,21 @@ const MapContainer: React.FC<MapContainerProps> = ({
       <MapView
         ref={mapRef}
         showsUserLocation
-        showsBuildings={false}
+        rotateEnabled={false}
+        toolbarEnabled={false}
+        moveOnMarkerPress={false}
         loadingEnabled={isLoading}
-        customMapStyle={colorScheme === 'dark' ? config.mapDarkMode : undefined}
         style={StyleSheet.absoluteFill}
         scrollEnabled={!isDrawing}
         onPanDrag={handleMapDrag}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         provider={PROVIDER_GOOGLE}
+        onMarkerPress={(event) =>
+          handleOnMarkerPress &&
+          handleOnMarkerPress(Number(event.nativeEvent.id))
+        }
+        customMapStyle={colorScheme === 'dark' ? config.mapDarkMode : undefined}
         // TODO - Set initial region based on user's location
         initialRegion={{
           ...defaultRegion,
@@ -87,6 +97,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
         {debug &&
           boundingBoxCoords.map((coord, index) => (
             <MemoizedMarker
+              identifier={`bounding-box-${index}`}
               key={index}
               coordinate={coord}
               pinColor="violet"
@@ -95,21 +106,30 @@ const MapContainer: React.FC<MapContainerProps> = ({
           ))}
         {debug && boundingBoxCenter && (
           <MemoizedMarker
+            identifier="bounding-box-center-point"
             coordinate={boundingBoxCenter}
-            pinColor="orange"
             tracksViewChanges={false}
+            pinColor="orange"
           />
         )}
         {memoizedProperties.map((property) => (
           <MemoizedMarker
+            identifier={String(property.id)}
             key={property.id}
-            pinColor="red"
             coordinate={{
               latitude: property.latitude,
               longitude: property.longitude,
             }}
-            tracksViewChanges={false}
-          />
+          >
+            <View
+              style={[
+                styles.markerButton,
+                {
+                  backgroundColor: Colors[colorScheme].tint,
+                },
+              ]}
+            />
+          </MemoizedMarker>
         ))}
       </MapView>
     </View>
@@ -119,6 +139,11 @@ const MapContainer: React.FC<MapContainerProps> = ({
 const styles = StyleSheet.create({
   mapContainer: {
     flex: 1,
+  },
+  markerButton: {
+    width: 15,
+    height: 15,
+    borderRadius: 30,
   },
 });
 

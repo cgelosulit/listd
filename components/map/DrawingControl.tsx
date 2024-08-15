@@ -35,7 +35,7 @@ const DrawingControls: React.FC<DrawingControlsProps> = ({
       style={[
         styles.drawingButton,
         {
-          backgroundColor: Colors[colorScheme].background,
+          backgroundColor: Colors[colorScheme].tabIconSelected,
           shadowColor:
             colorScheme === 'dark'
               ? Colors.light.background
@@ -48,11 +48,11 @@ const DrawingControls: React.FC<DrawingControlsProps> = ({
       <IconComponent
         width={28}
         height={28}
-        color={Colors[colorScheme].text}
+        color={Colors.dark.text}
         {...IconComponent}
       />
       {text && (
-        <Text style={[styles.buttonText, { color: Colors[colorScheme].text }]}>
+        <Text style={[styles.buttonText, { color: Colors.dark.text }]}>
           {text}
         </Text>
       )}

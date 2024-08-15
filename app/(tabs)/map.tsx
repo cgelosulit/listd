@@ -1,11 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Touchable, TouchableOpacity } from 'react-native';
 import { LatLng, PanDragEvent } from 'react-native-maps';
-import { Text, View } from '@/components/common/Themed';
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetFlatList,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import MapContainer from '@/components/map/MapContainer';
 import DrawingControls from '@/components/map/DrawingControl';
 import {
@@ -16,14 +12,15 @@ import {
   getBoundingBoxCenter,
   getPolylineCenter,
 } from '@/utils/mapUtils';
-import { useMapPropertySearch } from '@/hooks/useMapPropertySearch';
+import { useInfiniteMapPropertySearch } from '@/hooks/useMapPropertySearch';
 import MapNotificationHeaderLoader from '@/components/map/MapNotificationHeaderLoader';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
-import MapHeaderControl from '@/components/map/MapHeaderControl';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import PropertyCard from '@/components/property/PropertyCard';
+import { View } from '@/components/common/Themed';
+import PropertyItem from '@/components/property/PropertyItem';
+import { Link, Stack } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import ListIcon from '@/components/icons/ListIcon';
 
 interface BoundingBox {
   maxLat: number;
@@ -33,13 +30,15 @@ interface BoundingBox {
 }
 
 type State = {
+  stopRendering: boolean;
+  propertyId: number;
   defaultRegion: LatLng;
   isDrawing: boolean;
   coordinates: LatLng[];
   isInTouch: boolean;
   bottomSheetIndex: number;
   pointsInside: LatLng[];
-  distanceInMiles: number;
+  distanceInKm: number;
   polylineCenter: LatLng | null;
   boundingBox: BoundingBox | null;
   boundingBoxCoords: LatLng[];
@@ -48,11 +47,13 @@ type State = {
 
 type Action =
   | { type: 'TOGGLE_DRAWING' }
+  | { type: 'SET_STOP_RENDERING'; payload: boolean }
+  | { type: 'SET_PROPERTY_ID'; payload: number }
   | { type: 'SET_COORDINATES'; payload: LatLng[] }
   | { type: 'SET_IS_IN_TOUCH'; payload: boolean }
   | { type: 'SET_BOTTOM_SHEET_INDEX'; payload: number }
   | { type: 'SET_POINTS_INSIDE'; payload: LatLng[] }
-  | { type: 'SET_DISTANCE_IN_MILES'; payload: number }
+  | { type: 'SET_DISTANCE_IN_KM'; payload: number }
   | { type: 'SET_POLYLINE_CENTER'; payload: LatLng | null }
   | { type: 'SET_BOUNDING_BOX'; payload: BoundingBox }
   | { type: 'SET_BOUNDING_BOX_COORDS'; payload: LatLng[] }
@@ -60,16 +61,18 @@ type Action =
   | { type: 'RESET' };
 
 const initialState: State = {
+  stopRendering: false,
+  propertyId: 0,
   defaultRegion: {
-    latitude: 14.625189853932493, // Latitude for Manila
-    longitude: 121.07380713841745, // Longitude for Manila
+    latitude: 14.5597, // Latitude for Manila
+    longitude: 121.021, // Longitude for Manila
   },
   isDrawing: false,
   bottomSheetIndex: -1,
   coordinates: [],
   isInTouch: false,
   pointsInside: [],
-  distanceInMiles: 0,
+  distanceInKm: 0,
   polylineCenter: null,
   boundingBox: null,
   boundingBoxCoords: [],
@@ -85,14 +88,18 @@ const reducer = (state: State, action: Action): State => {
       };
     case 'SET_COORDINATES':
       return { ...state, coordinates: action.payload };
+    case 'SET_STOP_RENDERING':
+      return { ...state, stopRendering: action.payload };
+    case 'SET_PROPERTY_ID':
+      return { ...state, propertyId: action.payload };
     case 'SET_IS_IN_TOUCH':
       return { ...state, isInTouch: action.payload };
     case 'SET_BOTTOM_SHEET_INDEX':
       return { ...state, bottomSheetIndex: action.payload };
     case 'SET_POINTS_INSIDE':
       return { ...state, pointsInside: action.payload };
-    case 'SET_DISTANCE_IN_MILES':
-      return { ...state, distanceInMiles: action.payload };
+    case 'SET_DISTANCE_IN_KM':
+      return { ...state, distanceInKm: action.payload };
     case 'SET_POLYLINE_CENTER':
       return { ...state, polylineCenter: action.payload };
     case 'SET_BOUNDING_BOX':
@@ -119,23 +126,30 @@ const reducer = (state: State, action: Action): State => {
 export default function MapScreen() {
   const colorScheme = useColorScheme();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['3%', '50%', '70%', '80%', '90%'], []);
+  const snapPoints = useMemo(() => ['3%', '45%'], []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isLoading, data: response } = useMapPropertySearch(
+
+  const { isLoading, data: response } = useInfiniteMapPropertySearch(
     {
       minLat: state.boundingBox?.minLat,
       minLong: state.boundingBox?.minLng,
       maxLat: state.boundingBox?.maxLat,
       maxLong: state.boundingBox?.maxLng,
-      distanceInMiles: state.distanceInMiles,
+      distanceInKilometers: state.distanceInKm,
       pointOfInterestLat: state.polylineCenter?.latitude,
       pointOfInterestLong: state.polylineCenter?.longitude,
     },
     state.boundingBox !== null &&
-      state.distanceInMiles > 0 &&
+      state.distanceInKm > 0 &&
       state.polylineCenter !== null &&
       !state.isInTouch,
   );
+
+  const property = useMemo(() => {
+    return response?.pages
+      ?.flatMap((p) => p.data.properties.results)
+      .find((p) => p.id === state.propertyId);
+  }, [response, state.propertyId]);
 
   const handleMapDrag = (event: PanDragEvent) => {
     event.persist();
@@ -159,6 +173,7 @@ export default function MapScreen() {
 
   const handleResetPress = () => {
     dispatch({ type: 'RESET' });
+    dispatch({ type: 'SET_STOP_RENDERING', payload: false });
   };
 
   const handleTouchStart = () => {
@@ -170,19 +185,14 @@ export default function MapScreen() {
     if (state.isDrawing) dispatch({ type: 'TOGGLE_DRAWING' });
   };
 
-  const renderBackdrop = useCallback(
-    (props: BottomSheetDefaultBackdropProps) => (
-      <BottomSheetBackdrop
-        appearsOnIndex={1}
-        disappearsOnIndex={0}
-        {...props}
-      />
-    ),
-    [],
-  );
+  const handleOnMarkerPress = (propertyId: number) => {
+    dispatch({ type: 'SET_PROPERTY_ID', payload: propertyId });
+    bottomSheetRef.current?.expand();
+  };
 
   useEffect(() => {
-    if (!state.isInTouch && state.coordinates.length > 0) {
+    const { stopRendering, isInTouch, coordinates } = state;
+    if (!stopRendering && !isInTouch && coordinates.length > 0) {
       const boundingBoxCoordinate = getBoundingBox(state.coordinates);
       dispatch({ type: 'SET_BOUNDING_BOX', payload: boundingBoxCoordinate });
       console.log('Bounding box:', boundingBoxCoordinate);
@@ -214,12 +224,12 @@ export default function MapScreen() {
           distancesFromPolylineToPolyCenter,
         );
 
-        console.log(distances);
-
         dispatch({
-          type: 'SET_DISTANCE_IN_MILES',
-          payload: distances.average,
+          type: 'SET_DISTANCE_IN_KM',
+          payload: distances.midpoint,
         });
+
+        console.log('Distances:', distances);
 
         console.log(
           'Average distance from center to bounding box edges:',
@@ -251,46 +261,67 @@ export default function MapScreen() {
 
       const bboxCenter = getBoundingBoxCenter(boundingBoxCoordinate);
       dispatch({ type: 'SET_BOUNDING_BOX_CENTER', payload: bboxCenter });
+      dispatch({ type: 'SET_STOP_RENDERING', payload: true });
     }
-  }, [state.isInTouch, state.coordinates]);
+  }, [state.isInTouch, state.coordinates, state.stopRendering]);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <MapHeaderControl
-        bottomSheetIndex={state.bottomSheetIndex}
-        handleOpenListResults={() => bottomSheetRef.current?.expand()}
-        handleCloseListResults={() => bottomSheetRef.current?.close()}
-      />
+    <View style={styles.container}>
+      {response?.pages &&
+        response?.pages.flatMap((x) => x.data.properties.results).length >
+          0 && (
+          <Stack.Screen
+            options={{
+              headerLeft: () => (
+                <Link style={{ marginLeft: 10 }} href="/" asChild>
+                  <TouchableOpacity>
+                    <ListIcon
+                      width={24}
+                      height={24}
+                      color={Colors[colorScheme].tabIconSelected}
+                    />
+                  </TouchableOpacity>
+                </Link>
+              ),
+            }}
+          />
+        )}
       {isLoading && <MapNotificationHeaderLoader text="Loading..." />}
-      <DrawingControls
-        isDrawing={state.isDrawing}
-        coordinates={state.coordinates}
-        boundingBoxCoords={state.boundingBoxCoords}
-        boundingBoxCenter={state.boundingBoxCenter}
-        handleButtonPress={handleButtonPress}
-        handleResetPress={handleResetPress}
-      />
+      {![1, 2].includes(state.bottomSheetIndex) && (
+        <DrawingControls
+          isDrawing={state.isDrawing}
+          coordinates={state.coordinates}
+          boundingBoxCoords={state.boundingBoxCoords}
+          boundingBoxCenter={state.boundingBoxCenter}
+          handleButtonPress={handleButtonPress}
+          handleResetPress={handleResetPress}
+        />
+      )}
       <MapContainer
         isDrawing={state.isDrawing}
-        properties={response?.data?.properties.results || []}
+        properties={
+          (response?.pages &&
+            response?.pages.flatMap((x) => x.data.properties.results)) ||
+          []
+        }
         coordinates={state.coordinates}
         defaultRegion={state.defaultRegion}
         boundingBoxCoords={state.boundingBoxCoords}
         boundingBoxCenter={state.boundingBoxCenter}
+        handleOnMarkerPress={handleOnMarkerPress}
         handleMapDrag={optimizedHandleMapDrag}
         handleTouchStart={handleTouchStart}
         handleTouchEnd={handleOnTouchEnd}
       />
-      {response?.data && response.data?.properties.results.length > 0 && (
+      {state.propertyId > 0 && property && (
         <BottomSheet
           ref={bottomSheetRef}
-          enablePanDownToClose
-          index={state.bottomSheetIndex}
-          onAnimate={(_, to) =>
-            dispatch({ type: 'SET_BOTTOM_SHEET_INDEX', payload: to })
-          }
-          backdropComponent={renderBackdrop}
           snapPoints={snapPoints}
+          enablePanDownToClose={false}
+          index={state.bottomSheetIndex}
+          onChange={(index) =>
+            dispatch({ type: 'SET_BOTTOM_SHEET_INDEX', payload: index })
+          }
           backgroundStyle={{
             backgroundColor: Colors[colorScheme].background,
           }}
@@ -298,19 +329,14 @@ export default function MapScreen() {
             backgroundColor: Colors[colorScheme].tabIconDefault,
           }}
         >
-          <BottomSheetFlatList
-            data={response?.data?.properties.results || []}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={{ padding: 10 }}
-            renderItem={({ item }) => (
-              <View>
-                <Text>{item.title}</Text>
-              </View>
-            )}
-          />
+          <BottomSheetView style={{ alignItems: 'center' }}>
+            <View style={{ position: 'absolute', left: 15, right: 15 }}>
+              <PropertyItem property={property} />
+            </View>
+          </BottomSheetView>
         </BottomSheet>
       )}
-    </GestureHandlerRootView>
+    </View>
   );
 }
 

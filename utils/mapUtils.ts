@@ -38,7 +38,7 @@ export const calculateDistances = (
   coordinates: LatLng[],
   adjustmentMeters: number = 100, // Default adjustment in meters
 ): number[] => {
-  const adjustmentMiles = adjustmentMeters / 1609.34; // Convert meters to miles
+  const adjustmentKilometers = adjustmentMeters / 1000; // Convert meters to kilometers
   const polylineCoords = coordinates.map((coord) => [
     coord.longitude,
     coord.latitude,
@@ -50,13 +50,13 @@ export const calculateDistances = (
     ) // Filter points inside the polyline
     .map((point) => {
       const distance = haversineDistance(center, point);
-      return distance - adjustmentMiles;
+      return distance - adjustmentKilometers;
     });
 };
 
 export const haversineDistance = (point1: LatLng, point2: LatLng): number => {
   const toRadians = (degrees: number) => degrees * (Math.PI / 180);
-  const R = 3958.8; // Radius of the Earth in miles
+  const R = 6371; // Radius of the Earth in kilometers
   const dLat = toRadians(point2.latitude - point1.latitude);
   const dLng = toRadians(point2.longitude - point1.longitude);
   const a =
@@ -66,7 +66,7 @@ export const haversineDistance = (point1: LatLng, point2: LatLng): number => {
       Math.sin(dLng / 2) *
       Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in miles
+  return R * c; // Distance in kilometers
 };
 
 export const generatePointsInsidePolygon = (polygon: LatLng[]): LatLng[] => {
@@ -127,8 +127,8 @@ export const calculateAverageDistanceFromCenterPointToAllBoundingBox = (
 ): number => {
   const { centerX, centerY, minX, minY, maxX, maxY } = boundingBox;
 
-  // Conversion factor from degrees to miles
-  const degreesToMiles = 69;
+  // Conversion factor from degrees to kilometers
+  const degreesToKilometers = 111.32;
 
   // Calculate the distances from the center point to each corner of the bounding box in degrees
   const distance1 = Math.sqrt(
@@ -144,15 +144,19 @@ export const calculateAverageDistanceFromCenterPointToAllBoundingBox = (
     Math.pow(centerX - maxX, 2) + Math.pow(centerY - maxY, 2),
   );
 
-  // Convert distances to miles
-  const distance1Miles = distance1 * degreesToMiles;
-  const distance2Miles = distance2 * degreesToMiles;
-  const distance3Miles = distance3 * degreesToMiles;
-  const distance4Miles = distance4 * degreesToMiles;
+  // Convert distances to kilometers
+  const distance1Kilometers = distance1 * degreesToKilometers;
+  const distance2Kilometers = distance2 * degreesToKilometers;
+  const distance3Kilometers = distance3 * degreesToKilometers;
+  const distance4Kilometers = distance4 * degreesToKilometers;
 
-  // Calculate the average distance in miles
+  // Calculate the average distance in kilometers
   const averageDistance =
-    (distance1Miles + distance2Miles + distance3Miles + distance4Miles) / 4;
+    (distance1Kilometers +
+      distance2Kilometers +
+      distance3Kilometers +
+      distance4Kilometers) /
+    4;
 
   // Return the average distance rounded to two decimal points
   return parseFloat(averageDistance.toFixed(2));
