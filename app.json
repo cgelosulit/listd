@@ -12,17 +12,17 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.savills.listd",
       "config": {
-        "googleMapsApiKey": ""
+        "googleMapsApiKey": "AIzaSyAGjLINOZ1IY6g_iYWnuH9AvTovVkJ48Rk"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#10b981"
       },
       "config": {
         "googleMaps": {
-          "apiKey": ""
+          "apiKey": "AIzaSyAFbqGHGL6zgjcSk1RAKtptBFWEL-mVwUk"
         }
       },
       "package": "com.savills.listd",
