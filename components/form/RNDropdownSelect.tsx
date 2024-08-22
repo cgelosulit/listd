@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, Platform, StyleSheet } from 'react-native';
 import RNSelectDropdown from 'react-native-select-dropdown';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import Colors from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 export interface Options {
   id: number;
-  title: string;
+  label: string;
   value: string;
 }
 
@@ -22,7 +22,7 @@ const RNDropdownSelect: React.FC<RNDropdownSelectProps> = ({
   placeholder,
   handleSelected,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
 
   const handleSelect = (selectedItem: Options, index: number) => {
     handleSelected && handleSelected(selectedItem);
@@ -33,17 +33,19 @@ const RNDropdownSelect: React.FC<RNDropdownSelectProps> = ({
       style={[
         styles.button,
         {
-          backgroundColor: Colors[colorScheme].dropdownBackground,
+          backgroundColor: Colors[colorScheme.theme].dropdownBackground,
         },
       ]}
     >
-      <Text style={[styles.buttonText, { color: Colors[colorScheme].text }]}>
-        {(selectedItem && selectedItem.title) || placeholder}
+      <Text
+        style={[styles.buttonText, { color: Colors[colorScheme.theme].text }]}
+      >
+        {(selectedItem && selectedItem.label) || placeholder}
       </Text>
       <Ionicons
         name={isOpened ? 'chevron-up' : 'chevron-down'}
         size={24}
-        style={[styles.icon, { color: Colors[colorScheme].text }]}
+        style={[styles.icon, { color: Colors[colorScheme.theme].text }]}
       />
     </View>
   );
@@ -52,14 +54,20 @@ const RNDropdownSelect: React.FC<RNDropdownSelectProps> = ({
     <View
       style={{
         ...styles.item,
-        ...{ backgroundColor: Colors[colorScheme].dropdownBackground },
         ...(isSelected && {
-          backgroundColor: Colors[colorScheme].dropdownSelected,
+          backgroundColor: Colors[colorScheme.theme].dropdownSelected,
         }),
       }}
     >
-      <Text style={[styles.itemText, { color: Colors[colorScheme].text }]}>
-        {item.title}
+      <Text
+        style={[
+          styles.itemText,
+          {
+            color: Colors[colorScheme.theme].text,
+          },
+        ]}
+      >
+        {item.label}
       </Text>
     </View>
   );
@@ -82,15 +90,14 @@ const RNDropdownSelect: React.FC<RNDropdownSelectProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    height: 50,
+    height: 45,
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
   },
   buttonText: {
     flex: 1,
-    fontSize: 14,
   },
   icon: {
     fontSize: 16,

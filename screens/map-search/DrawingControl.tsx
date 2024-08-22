@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { LatLng } from 'react-native-maps';
-import { Text, View } from '../common/Themed';
-import PointingHandIcon from '../icons/PointingHandIcon';
-import XIcon from '../icons/XIcon';
+import { Text, View } from '@/components/common/Themed';
+import PointingHandIcon from '@/components/icons/PointingHandIcon';
+import XIcon from '@/components/icons/XIcon';
 import { SvgProps } from 'react-native-svg';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';

@@ -1,17 +1,17 @@
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import React, { memo } from 'react';
 import { StyleSheet, ViewProps } from 'react-native';
 import { View } from '../common/Themed';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 const Notch: React.FC<ViewProps> = (props) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
     <View
       style={[
         styles.root,
         {
-          borderTopColor: Colors[colorScheme].tint,
+          borderTopColor: Colors[colorScheme.theme].emerald500,
         },
       ]}
       {...props}

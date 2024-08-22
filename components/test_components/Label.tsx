@@ -1,9 +1,9 @@
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import React, { memo } from 'react';
 import { StyleSheet, ViewProps } from 'react-native';
 import { Text, View } from '../common/Themed';
-import { formatToCurrency } from '@/utils/formatToCurrency';
+import { formatToCurrency } from '@/utils/format-to-currency';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 interface LabelProps extends ViewProps {
   text: number;
@@ -15,13 +15,13 @@ const Label: React.FC<LabelProps> = ({
   currencyFormat,
   ...restProps
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
     <View
       style={[
         styles.root,
         {
-          backgroundColor: Colors[colorScheme].tint,
+          backgroundColor: Colors[colorScheme.theme].emerald500,
         },
       ]}
       {...restProps}

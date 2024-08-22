@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { config } from '@/constants/Configs';
-import { cleanObject } from '@/utils/cleanObject';
+import { QueryFunctionContext, useInfiniteQuery } from '@tanstack/react-query';
+import { Configs } from '@/constants/Configs';
+import { cleanObject } from '@/utils/clean-object';
 import { Property, PropertyListingSearchQuery } from '@/interface';
 
 export const useInfinitePropertyListingSearch = (
@@ -12,16 +12,14 @@ export const useInfinitePropertyListingSearch = (
     enabled,
     initialPageParam: 1,
     getPreviousPageParam: (firstPage) => {
-      console.log(firstPage.data.previousPage);
       return firstPage.data.previousPage;
     },
     getNextPageParam: (lastPage) => {
-      console.log(lastPage.data.nextPage);
       return lastPage.data.nextPage;
     },
     queryKey: ['infinite-query-property-listing', JSON.stringify(params)],
-    queryFn: async () =>
-      await axios.get<{
+    queryFn: async ({ pageParam }: QueryFunctionContext) => {
+      return await axios.get<{
         properties: {
           results: Property[];
         };
@@ -31,8 +29,9 @@ export const useInfinitePropertyListingSearch = (
         nextPage: number;
         previousPage: number;
       }>('/api/properties', {
-        baseURL: config.listdApiUrl,
-        params: cleanObject(params),
-      }),
+        baseURL: Configs.listdApiUrl,
+        params: cleanObject({ ...params, cursor: pageParam }),
+      });
+    },
   });
 };

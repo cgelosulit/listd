@@ -1,20 +1,25 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import 'react-native-reanimated';
+import 'react-native-url-polyfill/auto';
+import { useEffect, useState } from 'react';
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
 import * as SecureStore from 'expo-secure-store';
-import { useEffect, useState } from 'react';
-import { ClerkProvider } from '@clerk/clerk-expo';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { config } from '@/constants/Configs';
-import 'react-native-reanimated';
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { Configs } from '@/constants/Configs';
+import { RootSiblingParent } from 'react-native-root-siblings';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LottieSplashScreen from '@/components/lottiefiles/LottieSplashScreen';
+import LottieSplashScreen from '@/components/LottieSplashScreen';
+import {
+  CustomThemeProvider,
+  useCustomTheme,
+} from '@/context/CustomThemeProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,13 +54,15 @@ export default function RootLayout() {
       try {
         return SecureStore.getItemAsync(key);
       } catch (err) {
-        return null;
+        console.error(err);
+        return;
       }
     },
     async saveToken(key: string, value: string) {
       try {
         return SecureStore.setItemAsync(key, value);
       } catch (err) {
+        console.error(err);
         return;
       }
     },
@@ -63,24 +70,31 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider
-      publishableKey={config.clerkPublishableKey}
       tokenCache={tokenCache}
+      publishableKey={Configs.clerkPublishableKey}
     >
-      <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView>
-          <RootLayoutNav />
-        </GestureHandlerRootView>
-      </QueryClientProvider>
+      <GestureHandlerRootView>
+        <QueryClientProvider client={queryClient}>
+          <CustomThemeProvider>
+            <RootSiblingParent>
+              <RootLayoutNav />
+            </RootSiblingParent>
+          </CustomThemeProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
     </ClerkProvider>
   );
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider
+      value={colorScheme.theme === 'dark' ? DarkTheme : DefaultTheme}
+    >
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="listings" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>

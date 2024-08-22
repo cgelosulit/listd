@@ -1,8 +1,8 @@
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from '../common/Themed';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 const THUMB_RADIUS_LOW = 12;
 const THUMB_RADIUS_HIGH = 16;
@@ -12,7 +12,7 @@ interface ThumbProps {
 }
 
 const Thumb: React.FC<ThumbProps> = ({ name }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
     <View
       style={
@@ -20,12 +20,12 @@ const Thumb: React.FC<ThumbProps> = ({ name }) => {
           ? {
               ...styles.rootHigh,
               ...styles.thumbBg,
-              borderColor: Colors[colorScheme].tint,
+              borderColor: Colors[colorScheme.theme].emerald500,
             }
           : {
               ...styles.rootLow,
               ...styles.thumbBg,
-              borderColor: Colors[colorScheme].tint,
+              borderColor: Colors[colorScheme.theme].emerald500,
             }
       }
     />

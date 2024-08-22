@@ -4,11 +4,11 @@ import {
   StyleSheet,
   GestureResponderEvent,
 } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import Colors from '@/constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Text } from './common/Themed';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 export type CustomHeaderFilterButtonIconType = 'Ionicons' | 'FontAwesome';
 
@@ -25,7 +25,7 @@ const CustomHeaderFilterButton: React.FC<CustomHeaderFilterButtonProps> = ({
   label,
   onPress,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
 
   const IconComponent = iconType === 'Ionicons' ? Ionicons : FontAwesome;
 
@@ -33,14 +33,14 @@ const CustomHeaderFilterButton: React.FC<CustomHeaderFilterButtonProps> = ({
     <TouchableOpacity
       style={[
         styles.button,
-        { borderColor: Colors[colorScheme].tabIconDefault },
+        { borderColor: Colors[colorScheme.theme].tabIconDefault },
       ]}
       onPress={onPress}
     >
       <IconComponent
         size={22}
         name={iconName as any}
-        color={Colors[colorScheme].tabIconSelected}
+        color={Colors[colorScheme.theme].tabIconSelected}
       />
       <Text style={styles.text}>{label}</Text>
     </TouchableOpacity>

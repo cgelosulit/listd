@@ -1,11 +1,14 @@
 import { StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/common/Themed';
 
-export default function FavoritesScreen() {
+export default function PresentScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Listing present screen</Text>
       <View
         style={styles.separator}
         lightColor="#eee"

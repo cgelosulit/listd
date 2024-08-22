@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Text, View } from '../common/Themed';
+import { Text, View } from '@/components/common/Themed';
 import React from 'react';
 
 interface MapNotificationHeaderLoaderProps {

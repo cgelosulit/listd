@@ -1,17 +1,17 @@
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from '../common/Themed';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 const Rail: React.FC = () => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
     <View
       style={[
         styles.root,
         {
-          backgroundColor: Colors[colorScheme].tint,
+          backgroundColor: Colors[colorScheme.theme].emerald500,
         },
       ]}
     />

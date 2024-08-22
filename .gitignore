@@ -43,3 +43,6 @@ expo-env.d.ts
 
 # Backup json file
 app.json.bak
+
+# To still use eas build
+ios/

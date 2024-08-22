@@ -42,21 +42,20 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ source }) => {
       data={data}
       {...baseOptions}
       autoPlay={isAutoPlay}
+      // https://github.com/dohooo/react-native-reanimated-carousel/issues/639
+      panGestureHandlerProps={{
+        activeOffsetX: [-20, 20],
+      }}
       pagingEnabled={isPagingEnabled}
       style={styles.carouselContainer}
       autoPlayInterval={isFast ? 100 : 2000}
       defaultScrollOffsetValue={scrollOffsetValue}
       onScrollBegin={() => null}
       onScrollEnd={() => null}
-      onSnapToItem={(index) => console.log('current index:', index + 1)}
+      onSnapToItem={(index) => null}
       renderItem={({ index }) => (
         <View style={styles.itemContainer}>
-          <Image
-            key={index}
-            style={styles.image}
-            source={{ uri: source }}
-            cachePolicy={'memory-disk'}
-          />
+          <Image key={index} style={styles.image} source={{ uri: source }} />
         </View>
       )}
     />

@@ -17,6 +17,7 @@ export interface PropertyMapSearchQuery {
   pointOfInterestLong: number;
 }
 
+// TODO: check if saan saan gamit tong hayup nato
 export type SortMode =
   | 'id'
   | 'newest'
@@ -26,7 +27,7 @@ export type SortMode =
 export interface PropertyListingSearchQuery {
   propertyType: string;
   listingType: string;
-  sortOrder: SortMode;
+  sortOrder: string;
   priceRangeLow: number;
   priceRangeHigh: number;
   sqmRangeLow: number;

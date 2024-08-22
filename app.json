@@ -2,17 +2,17 @@
   "expo": {
     "name": "Listd",
     "slug": "listd",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "listd",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "supportsTablet": false,
       "bundleIdentifier": "com.savills.listd",
       "config": {
-        "googleMapsApiKey": ""
+        "googleMapsApiKey": "AIzaSyAGjLINOZ1IY6g_iYWnuH9AvTovVkJ48Rk"
       }
     },
     "android": {
@@ -22,7 +22,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": ""
+          "apiKey": "AIzaSyAFbqGHGL6zgjcSk1RAKtptBFWEL-mVwUk"
         }
       },
       "package": "com.savills.listd",
@@ -70,7 +70,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "listdApiUrl": "https://listd.csulit.dev",
+      "listdApiUrl": "https://restless-heart-api-staging.kmcc-app.cc",
       "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ",
       "router": {
         "origin": false

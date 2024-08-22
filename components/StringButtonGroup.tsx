@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, View } from './common/Themed';
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 interface StringButtonGroupProps {
   labels: string[];
@@ -16,7 +16,7 @@ const StringButtonGroup: React.FC<StringButtonGroupProps> = ({
   onChange,
 }) => {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
 
   const handlePress = (index: number) => {
     setActiveIndex(index);
@@ -31,11 +31,11 @@ const StringButtonGroup: React.FC<StringButtonGroupProps> = ({
           style={[
             styles.button,
             {
-              borderColor: Colors[colorScheme].tint,
+              borderColor: Colors[colorScheme.theme].emerald500,
               backgroundColor:
                 activeIndex === index
-                  ? Colors[colorScheme].tint
-                  : 'transparent',
+                  ? Colors[colorScheme.theme].emerald500
+                  : Colors[colorScheme.theme].background,
             },
           ]}
           activeOpacity={0.8}
@@ -43,10 +43,11 @@ const StringButtonGroup: React.FC<StringButtonGroupProps> = ({
         >
           <Text
             style={{
+              fontWeight: '600',
               color:
                 activeIndex === index
                   ? Colors.dark.text
-                  : Colors[colorScheme].tint,
+                  : Colors[colorScheme.theme].emerald500,
             }}
           >
             {label}
@@ -59,16 +60,17 @@ const StringButtonGroup: React.FC<StringButtonGroupProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     gap: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
   button: {
-    width: '18%',
+    width: '48%',
     borderWidth: 1,
     borderRadius: 8,
-    paddingVertical: 14,
+    paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },

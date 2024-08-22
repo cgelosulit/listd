@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config } from '@/constants/Configs';
+import { Configs } from '@/constants/Configs';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { Property, PropertyMapSearchQuery } from '@/interface';
 
@@ -19,7 +19,7 @@ export const useMapPropertySearch = (
         nextId: number;
         prevCursor: number;
       }>('/api/properties/map-search', {
-        baseURL: config.listdApiUrl,
+        baseURL: Configs.listdApiUrl,
         params,
       }),
   });
@@ -44,7 +44,7 @@ export const useInfiniteMapPropertySearch = (
         nextId: number;
         prevCursor: number;
       }>('/api/properties/map-search', {
-        baseURL: config.listdApiUrl,
+        baseURL: Configs.listdApiUrl,
         params,
       }),
   });

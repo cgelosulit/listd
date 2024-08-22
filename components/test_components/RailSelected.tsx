@@ -1,18 +1,18 @@
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from '../common/Themed';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 const RailSelected: React.FC = () => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   return (
     <View
       style={[
         styles.root,
         {
           // TODO: this is where we can change the middle color when moving
-          backgroundColor: Colors[colorScheme].tint,
+          backgroundColor: Colors[colorScheme.theme].emerald500,
         },
       ]}
     />

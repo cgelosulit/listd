@@ -1,9 +1,9 @@
-import { StyleSheet, Touchable, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { LatLng, PanDragEvent } from 'react-native-maps';
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import MapContainer from '@/components/map/MapContainer';
-import DrawingControls from '@/components/map/DrawingControl';
+import MapContainer from '@/screens/map-search/MapContainer';
+import DrawingControls from '@/screens/map-search/DrawingControl';
 import {
   calculateAverageDistanceFromCenterPointToAllBoundingBox,
   calculateAverageMaxAndMidpointDistance,
@@ -11,16 +11,15 @@ import {
   getBoundingBox,
   getBoundingBoxCenter,
   getPolylineCenter,
-} from '@/utils/mapUtils';
+} from '@/utils/map-utils';
 import { useInfiniteMapPropertySearch } from '@/hooks/useMapPropertySearch';
-import MapNotificationHeaderLoader from '@/components/map/MapNotificationHeaderLoader';
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import MapNotificationHeaderLoader from '@/screens/map-search/MapNotificationHeaderLoader';
 import { View } from '@/components/common/Themed';
 import PropertyItem from '@/components/property/PropertyItem';
 import { Link, Stack } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import ListIcon from '@/components/icons/ListIcon';
+import Colors from '@/constants/Colors';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 interface BoundingBox {
   maxLat: number;
@@ -124,7 +123,7 @@ const reducer = (state: State, action: Action): State => {
 };
 
 export default function MapScreen() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['3%', '45%'], []);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -273,12 +272,12 @@ export default function MapScreen() {
           <Stack.Screen
             options={{
               headerLeft: () => (
-                <Link style={{ marginLeft: 10 }} href="/" asChild>
+                <Link style={{ marginLeft: 10 }} href="/listings" asChild>
                   <TouchableOpacity>
                     <ListIcon
                       width={24}
                       height={24}
-                      color={Colors[colorScheme].tabIconSelected}
+                      color={Colors[colorScheme.theme].tabIconSelected}
                     />
                   </TouchableOpacity>
                 </Link>
@@ -323,10 +322,10 @@ export default function MapScreen() {
             dispatch({ type: 'SET_BOTTOM_SHEET_INDEX', payload: index })
           }
           backgroundStyle={{
-            backgroundColor: Colors[colorScheme].background,
+            backgroundColor: Colors[colorScheme.theme].background,
           }}
           handleIndicatorStyle={{
-            backgroundColor: Colors[colorScheme].tabIconDefault,
+            backgroundColor: Colors[colorScheme.theme].tabIconDefault,
           }}
         >
           <BottomSheetView style={{ alignItems: 'center' }}>

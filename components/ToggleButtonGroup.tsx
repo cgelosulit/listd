@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, View } from './common/Themed';
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 interface ToggleButtonGroupProps {
   buttons: string[];
@@ -15,7 +15,7 @@ const ToggleButtonGroup: React.FC<ToggleButtonGroupProps> = ({
   initialActiveIndex = 0,
   onChange,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 
   const handlePress = (index: number) => {
@@ -33,9 +33,9 @@ const ToggleButtonGroup: React.FC<ToggleButtonGroupProps> = ({
             {
               backgroundColor:
                 activeIndex === index
-                  ? Colors[colorScheme].tint
+                  ? Colors[colorScheme.theme].emerald500
                   : 'transparent',
-              borderColor: Colors[colorScheme].tint,
+              borderColor: Colors[colorScheme.theme].emerald500,
               borderWidth: activeIndex === index ? 0 : 1,
             },
           ]}
@@ -48,7 +48,7 @@ const ToggleButtonGroup: React.FC<ToggleButtonGroupProps> = ({
               color:
                 activeIndex === index
                   ? Colors.dark.text
-                  : Colors[colorScheme].tint,
+                  : Colors[colorScheme.theme].emerald500,
             }}
           >
             {button}

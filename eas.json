@@ -8,7 +8,7 @@
       "distribution": "internal",
       "channel": "development",
       "env": {
-        "listdApiUrl": "https://listd.csulit.dev",
+        "listdApiUrl": "https://restless-heart-api-staging.kmcc-app.cc",
         "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
       },
       "ios": {
@@ -22,14 +22,14 @@
         "buildType": "apk"
       },
       "env": {
-        "listdApiUrl": "https://listd.csulit.dev",
+        "listdApiUrl": "https://restless-heart-api-staging.kmcc-app.cc",
         "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
       }
     },
     "production": {
       "channel": "production",
       "env": {
-        "listdApiUrl": "https://listd.csulit.dev",
+        "listdApiUrl": "https://restless-heart-api-staging.kmcc-app.cc",
         "clerkPublishableKey": "pk_test_dG91Y2hlZC1vc3RyaWNoLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
       }
     }

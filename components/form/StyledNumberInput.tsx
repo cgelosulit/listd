@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import CurrencyInput from 'react-native-currency-input';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { BottomSheetTextInputProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetTextInput';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
 
 /**
   Sample use case with no delimiter and separator
@@ -39,7 +39,7 @@ const StyledNumberInput: React.FC<StyledNumberInputProps> = ({
   placeholder,
   onChangeValue,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   const [onFocus, setOnFocus] = useState(false);
 
   return (
@@ -56,17 +56,17 @@ const StyledNumberInput: React.FC<StyledNumberInputProps> = ({
       onChangeValue={onChangeValue}
       onFocus={() => setOnFocus(true)}
       onBlur={() => setOnFocus(false)}
-      placeholderTextColor={Colors[colorScheme].inputPlaceholderColor}
+      placeholderTextColor={Colors[colorScheme.theme].inputPlaceholderColor}
       renderTextInput={(props: BottomSheetTextInputProps) => (
         <BottomSheetTextInput id={name} {...props} />
       )}
       style={[
         styles.container,
         {
-          color: Colors[colorScheme].text,
+          color: Colors[colorScheme.theme].text,
           borderColor: onFocus
-            ? Colors[colorScheme].tint
-            : Colors[colorScheme].inputBorderColor,
+            ? Colors[colorScheme.theme].emerald500
+            : Colors[colorScheme.theme].inputBorderColor,
         },
       ]}
     />

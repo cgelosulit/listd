@@ -7,11 +7,12 @@ import MapView, {
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 import MemoizedMarker from './MemoizedMarker';
-import { config } from '@/constants/Configs';
+import { Configs } from '@/constants/Configs';
 import { Property } from '@/interface';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { View } from '../common/Themed';
+import { Text, View } from '@/components/common/Themed';
 import Colors from '@/constants/Colors';
+import { useCustomTheme } from '@/context/CustomThemeProvider';
+import { formatToCurrency } from '@/utils/format-to-currency';
 
 type MapContainerProps = {
   debug?: boolean;
@@ -29,9 +30,16 @@ type MapContainerProps = {
 };
 
 const MemoizedPolyline = React.memo(
-  ({ coordinates }: { coordinates: LatLng[] }) => (
-    <Polyline coordinates={coordinates} strokeWidth={1} strokeColor="blue" />
-  ),
+  ({ coordinates }: { coordinates: LatLng[] }) => {
+    const colorScheme = useCustomTheme();
+    return (
+      <Polyline
+        strokeWidth={2.5}
+        coordinates={coordinates}
+        strokeColor={Colors[colorScheme.theme].emerald500}
+      />
+    );
+  },
 );
 
 const MapContainer: React.FC<MapContainerProps> = ({
@@ -48,7 +56,7 @@ const MapContainer: React.FC<MapContainerProps> = ({
   handleTouchStart,
   handleTouchEnd,
 }) => {
-  const colorScheme = useColorScheme();
+  const colorScheme = useCustomTheme();
   const mapRef = useRef<MapView>(null);
 
   // TODO: Memoize the coordinates and properties to prevent unnecessary re-renders
@@ -83,7 +91,9 @@ const MapContainer: React.FC<MapContainerProps> = ({
           handleOnMarkerPress &&
           handleOnMarkerPress(Number(event.nativeEvent.id))
         }
-        customMapStyle={colorScheme === 'dark' ? config.mapDarkMode : undefined}
+        customMapStyle={
+          colorScheme.theme === 'dark' ? Configs.mapDarkMode : undefined
+        }
         // TODO - Set initial region based on user's location
         initialRegion={{
           ...defaultRegion,
@@ -125,10 +135,19 @@ const MapContainer: React.FC<MapContainerProps> = ({
               style={[
                 styles.markerButton,
                 {
-                  backgroundColor: Colors[colorScheme].tint,
+                  backgroundColor: Colors[colorScheme.theme].emerald500,
                 },
               ]}
-            />
+            >
+              <Text
+                style={{
+                  fontSize: 10,
+                  color: Colors.dark.text,
+                }}
+              >
+                {formatToCurrency(Number(property.price), { toFixed: 0 })}
+              </Text>
+            </View>
           </MemoizedMarker>
         ))}
       </MapView>
@@ -141,9 +160,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   markerButton: {
-    width: 15,
-    height: 15,
-    borderRadius: 30,
+    padding: 5,
+    borderRadius: 8,
   },
 });
 
